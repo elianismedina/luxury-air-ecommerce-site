@@ -42,11 +42,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Construct Prisma client with explicit adapter (Prisma v7 way).
-    // Pass the runtime DB URL as adapter.
-    prisma = new PrismaClientCtor({
-      adapter: dbUrl,
-    } as any);
+    // Construct Prisma client. With Prisma v6, the URL is in schema.prisma
+    // and read from DATABASE_URL env var, so no options are needed.
+    prisma = new PrismaClientCtor();
     const { name, email, password, confirmPassword } = await request.json();
 
     // Validate input
