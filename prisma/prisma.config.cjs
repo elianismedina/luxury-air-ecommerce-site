@@ -1,13 +1,3 @@
-require("dotenv").config();
-
-module.exports = {
-  schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
-  },
-  datasource: {
-    name: "db",
-    provider: "postgresql",
-    url: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
-  },
-};
+// DEPRECATED: keep a single prisma.config at repo root. This file is kept
+// here for reference and intentionally disabled.
+module.exports = {};

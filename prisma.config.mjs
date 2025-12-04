@@ -1,11 +1,5 @@
-import "dotenv/config";
-
-export default {
-  schema: "prisma/schema.prisma",
-  migrations: { path: "prisma/migrations" },
-  datasource: {
-    name: "db",
-    provider: "postgresql",
-    url: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
-  },
-};
+// DEPRECATED: This file was left here during migrations/experiments.
+// Use `prisma.config.ts` at the repository root as the single Prisma config.
+// This file can be safely deleted. It has been intentionally emptied to
+// avoid conflicting configurations.
+export default {};
