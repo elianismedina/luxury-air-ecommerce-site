@@ -10,6 +10,20 @@ let prisma: any = null;
 
 export async function POST(request: NextRequest) {
   try {
+    if (!PrismaClientCtor) {
+      console.error(
+        "Prisma client constructor not found on runtime imports",
+        PrismaPkg
+      );
+      return NextResponse.json(
+        {
+          error:
+            "Prisma client constructor not found (server misconfiguration)",
+        },
+        { status: 500 }
+      );
+    }
+
     prisma = new PrismaClientCtor();
     const { name, email, password, confirmPassword } = await request.json();
 
@@ -72,9 +86,17 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Signup error:", error);
+    // Emit detailed error to server logs for debugging
+    console.error("Signup error:", error, {
+      name: (error as any)?.name,
+      code: (error as any)?.code,
+      message: (error as any)?.message,
+      stack: (error as any)?.stack?.toString?.(),
+    });
+
+    // Return error message for quick debugging (remove in production)
     return NextResponse.json(
-      { error: "Failed to create account" },
+      { error: (error as any)?.message || "Failed to create account" },
       { status: 500 }
     );
   } finally {
