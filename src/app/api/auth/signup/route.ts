@@ -42,10 +42,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Construct Prisma client. In Prisma v7, the URL is provided via
-    // environment (DATABASE_URL or PRISMA_DATABASE_URL) which prisma.config.ts reads.
-    // Do NOT pass datasources/adapter directly to constructor; let env vars be used.
-    prisma = new PrismaClientCtor();
+    // Construct Prisma client with explicit adapter (Prisma v7 way).
+    // Pass the runtime DB URL as adapter.
+    prisma = new PrismaClientCtor({
+      adapter: dbUrl,
+    } as any);
     const { name, email, password, confirmPassword } = await request.json();
 
     // Validate input
