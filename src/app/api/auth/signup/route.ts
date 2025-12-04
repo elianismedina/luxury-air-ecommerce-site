@@ -10,6 +10,24 @@ let prisma: any = null;
 
 export async function POST(request: NextRequest) {
   try {
+    // Ensure we have a runtime DB URL available. In deployed environments (Vercel)
+    // this must be set in Project > Settings > Environment Variables.
+    const dbUrl = process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL;
+    if (!dbUrl) {
+      console.error("Missing DATABASE_URL / PRISMA_DATABASE_URL at runtime", {
+        envKeys: Object.keys(process.env).filter(
+          (k) => k.includes("DATABASE") || k.includes("PRISMA")
+        ),
+      });
+      return NextResponse.json(
+        {
+          error:
+            "Missing DATABASE_URL (or PRISMA_DATABASE_URL) in server environment. Set it in Vercel or your host.",
+        },
+        { status: 500 }
+      );
+    }
+
     if (!PrismaClientCtor) {
       console.error(
         "Prisma client constructor not found on runtime imports",
@@ -24,6 +42,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Construct Prisma client. In Prisma v7, the URL is provided via
+    // environment (DATABASE_URL or PRISMA_DATABASE_URL) which prisma.config.ts reads.
+    // Do NOT pass datasources/adapter directly to constructor; let env vars be used.
     prisma = new PrismaClientCtor();
     const { name, email, password, confirmPassword } = await request.json();
 
