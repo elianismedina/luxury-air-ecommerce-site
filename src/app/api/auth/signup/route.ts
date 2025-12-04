@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import * as PrismaPkg from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-let prisma: PrismaClient | null = null;
+// Some Prisma client builds may export differently in deployed environments.
+// Resolve the constructor at runtime to avoid TypeScript import errors on build servers.
+const PrismaClientCtor: any =
+  (PrismaPkg as any).PrismaClient ?? (PrismaPkg as any).default;
+let prisma: any = null;
 
 export async function POST(request: NextRequest) {
   try {
-    prisma = new PrismaClient();
+    prisma = new PrismaClientCtor();
     const { name, email, password, confirmPassword } = await request.json();
 
     // Validate input
